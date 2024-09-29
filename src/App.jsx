@@ -36,12 +36,16 @@ export default function App() {
     //eğer varsa JSON olarak parse edip state'e alıyoruz, yoksa DEFAULT_CONFIG kullanıyoruz.
   })
 
+  //state değiştiğinde localStorage'a kaydetmek için useEffect kullanıyoruz.
+  useEffect(() => {
+    localStorage.setItem('widgetConfig', JSON.stringify(widgetConfig))
+    //localStorage'a widgetConfig'i kaydetmek için JSON.stringify kullanıyoruz.
+  }, [widgetConfig])
+
   const [saveRequested, setSaveRequested] = useState(false)
 
   // save fonksiyonu ile widgetConfig'i localStorage'a kaydediyoruz.
   function save() {
-    localStorage.setItem('widgetConfig', JSON.stringify(widgetConfig))
-    //localStorage'a widgetConfig'i kaydetmek için JSON.stringify kullanıyoruz.
     setSaveRequested(true) // Aşağıdaki 126. satırda yeşil "Kaydedildi" mesajının oluşturulmasına neden olur. State daha sonra 70. satırdaki setTimeout tarafından tekrar false değerine ayarlanır ve mesaj kaldırılır.
   }
 
