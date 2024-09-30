@@ -30,17 +30,14 @@ export default function App() {
   //ORJ DOKUMANTASYON Lazy initial state= Argüman initialState, ilk render sırasında kullanılan durumdur. Sonraki renderlarda, dikkate alınmaz. İlk durum pahalı bir hesaplamanın sonucuysa, bunun yerine yalnızca ilk render sırasında yürütülecek bir fonksiyon sağlayabilirsiniz :  useState(()=>{ const initialState= someExpensiveComputation(props)  return initialState })
   //Lazy initialization kullanarak widgetConfig'i başlatıyoruz.
   const [widgetConfig, setWidgetConfig] = useState(() => {
-    const savedConfig = localStorage.getItem('widgetConfig')
-    //localStorage'da 'widgetConfig' key'ine sahip bir veri olup olmadığını kontrol ediyoruz.
-    return savedConfig ? JSON.parse(savedConfig) : DEFAULT_CONFIG
-    //eğer varsa JSON olarak parse edip state'e alıyoruz, yoksa DEFAULT_CONFIG kullanıyoruz.
+    if (typeof window !== 'undefined') {
+      const savedConfig = localStorage.getItem('widgetConfig')
+      //localStorage'da 'widgetConfig' key'ine sahip bir veri olup olmadığını kontrol ediyoruz.
+      return savedConfig ? JSON.parse(savedConfig) : DEFAULT_CONFIG
+      //eğer varsa JSON olarak parse edip state'e alıyoruz, yoksa DEFAULT_CONFIG kullanıyoruz.
+    }
+    return DEFAULT_CONFIG
   })
-
-  //state değiştiğinde localStorage'a kaydetmek için useEffect kullanıyoruz.
-  useEffect(() => {
-    localStorage.setItem('widgetConfig', JSON.stringify(widgetConfig))
-    //localStorage'a widgetConfig'i kaydetmek için JSON.stringify kullanıyoruz.
-  }, [widgetConfig])
 
   const [saveRequested, setSaveRequested] = useState(false)
 
@@ -48,6 +45,14 @@ export default function App() {
   function save() {
     setSaveRequested(true) // Aşağıdaki 126. satırda yeşil "Kaydedildi" mesajının oluşturulmasına neden olur. State daha sonra 70. satırdaki setTimeout tarafından tekrar false değerine ayarlanır ve mesaj kaldırılır.
   }
+
+  //state değiştiğinde localStorage'a kaydetmek için useEffect kullanıyoruz.
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('widgetConfig', JSON.stringify(widgetConfig))
+      //localStorage'a widgetConfig'i kaydetmek için JSON.stringify kullanıyoruz.
+    }
+  }, [widgetConfig])
 
   /****** Kodunuzu yukarıya yazın*******************************************************************  
  
