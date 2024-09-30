@@ -31,24 +31,27 @@ export default function App() {
   //Lazy initialization kullanarak widgetConfig'i başlatıyoruz.
   const [widgetConfig, setWidgetConfig] = useState(() => {
     if (typeof window !== 'undefined') {
+      // Tarayıcıda olduğumuzu kontrol ediyoruz sonra emin olduktan sonra localStorage'u kullanıyoruz
+
       const savedConfig = localStorage.getItem('widgetConfig')
       //localStorage'da 'widgetConfig' key'ine sahip bir veri olup olmadığını kontrol ediyoruz.
       return savedConfig ? JSON.parse(savedConfig) : DEFAULT_CONFIG
       //eğer varsa JSON olarak parse edip state'e alıyoruz, yoksa DEFAULT_CONFIG kullanıyoruz.
     }
     return DEFAULT_CONFIG
+    // Eğer sunucu tarafında render ediliyorsa varsayılan config döndürülür
   })
 
   const [saveRequested, setSaveRequested] = useState(false)
 
-  // save fonksiyonu ile widgetConfig'i localStorage'a kaydediyoruz.
   function save() {
     setSaveRequested(true) // Aşağıdaki 126. satırda yeşil "Kaydedildi" mesajının oluşturulmasına neden olur. State daha sonra 70. satırdaki setTimeout tarafından tekrar false değerine ayarlanır ve mesaj kaldırılır.
   }
 
-  //state değiştiğinde localStorage'a kaydetmek için useEffect kullanıyoruz.
+  //widgetConfig state'i değiştiğinde localStorage'a kaydetmek için useEffect kullanıyoruz.
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Sadece tarayıcıda olduğumuzda localStorage'a kaydediyoruz
       localStorage.setItem('widgetConfig', JSON.stringify(widgetConfig))
       //localStorage'a widgetConfig'i kaydetmek için JSON.stringify kullanıyoruz.
     }
